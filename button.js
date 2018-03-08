@@ -1,51 +1,51 @@
 
-function Button (canvas, ctx, scale, lineColor, pressColor, font, lineWidth) {
+function Button (canvas, ctx, scale, buttonColor, lineColor, pressColor, font, lineWidth) {
     
     this.canvas = canvas;
     this.ctx = ctx;
     this.scale = scale;
     this.lineColor = lineColor;
+    this.buttonColor = buttonColor;
     this.pressColor = pressColor;
     this.font = font;
     this.lineWidth = lineWidth;
     this.mouseIsDown = false;
     this.obj = {};
-    this.radius = this.canvas.width*.5 - this.lineWidth;
+    this.radius = (this.canvas.width*.5) - this.lineWidth;
     this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
     this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));
     
 }
 
 Button.prototype.draw = function () {
-   // the circle
-  this.ctx.save();
-  this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
-  this.ctx.translate(this.canvas.width/2, this.canvas.height/2);
-  this.ctx.scale(this.scale,this.scale);
-  this.ctx.lineWidth = this.lineWidth;
-  this.ctx.beginPath(); 
-  this.ctx.strokeStyle = this.lineColor;
-  this.ctx.arc(0,0,this.radius, 0, 2*Math.PI);
-  this.ctx.stroke();
-  this.ctx.restore(); 
-  this.ctx.closePath();
+      
+        var rectX = (this.canvas.width/2)-(this.radius*this.scale);
+        var rectY = (this.canvas.height/2)-(this.radius*this.scale);
+       this.ctx.beginPath();
+       this.ctx.rect(rectX, rectY, (this.canvas.width-this.lineWidth*2)*this.scale, (this.canvas.height-this.lineWidth*2)*this.scale);
+       this.ctx.fillStyle = this.buttonColor;
+       this.ctx.fill();
+       this.ctx.lineWidth = this.lineWidth;
+       this.ctx.strokeStyle = this.lineColor;
+       this.ctx.stroke();
     
-    if(this.mouseIsDown)
-      {
-          this.ctx.fillStyle = this.pressColor;
-          this.ctx.fill();
-         
-      }
-    else 
-      {
-        this.ctx.fillStyle = this.lineColor;
-        this.ctx.fill();
-      }
-    this.ctx.beginPath()  
-    this.ctx.rect(0,0, this.canvas.width, this.canvas.height);
-    this.ctx.lineWidth = this.lineWidth;
-    this.ctx.closePath();
-    this.ctx.stroke();
+      this.ctx.beginPath();
+      this.ctx.arc(this.canvas.width/2, this.canvas.height/2, this.radius*this.scale, 0, 2 * Math.PI, false);
+      
+      if(this.mouseIsDown)
+          {
+              this.ctx.fillStyle = this.pressColor;
+              this.ctx.fill();
+          }
+        else
+        {
+             this.ctx.fillStyle = this.buttonColor;
+              this.ctx.fill();
+        }
+     
+      this.ctx.lineWidth = this.lineWidth;
+      this.ctx.strokeStyle = this.lineColor;
+      this.ctx.stroke();
     
 };
 
@@ -64,4 +64,3 @@ Button.prototype.mouseUp = function() {
     //console.log("mouseup");
     this.mouseIsDown = false;
 };
-
