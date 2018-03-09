@@ -12,11 +12,13 @@ function Slider (canvas, ctx, backgroundColor, sliderColor, rangeLow, rangeHigh,
   this.lineWidth = lineWidth;
   this.lineColor = lineColor;
   this.mouseIsDown = false;
-  this.width = width;
-  this.height = height;
+  this.width = width-lineWidth;
+  this.height = height-lineWidth;
   this.axis = axis;
   this.sliderY = this.height-(this.height/10)+this.lineWidth;
-  this.mousePos;
+  this.sliderX = this.lineWidth*2;
+  this.mousePos = 0;
+  this.value = 0;
     
   this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
   this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));   this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
@@ -33,18 +35,33 @@ Slider.prototype.draw = function () {
        this.ctx.lineWidth = this.lineWidth;
        this.ctx.strokeStyle = this.lineColor;
        this.ctx.stroke();
-    
-       //mouse events
-        if(this.mouseIsDown)
-            {
-                this.sliderY = this.mousePos;
-            }
-    
+       
        //draw the slider
        this.ctx.save();
        this.ctx.beginPath();
-       this.ctx.moveTo(0, this.sliderY);
-       this.ctx.rect(0+this.lineWidth, this.sliderY, this.width, this.height/10);
+       
+        if(this.axis === 'v')
+            {
+                //mouse events
+                if(this.mouseIsDown)
+                {
+                    this.sliderY = this.mousePos;
+                }
+                this.ctx.moveTo(0, this.sliderY);
+                this.ctx.rect(this.lineWidth, this.sliderY, this.width, this.height/10);
+            }
+        if(this.axis === 'h')
+            {
+                    //mouse events
+                if(this.mouseIsDown)
+                {
+                    this.sliderX = this.mousePos;
+                }   
+                this.ctx.moveTo(this.sliderX, 0);
+                this.ctx.rect(this.sliderX-this.lineWidth, this.lineWidth, this.width/10, this.height);
+                //console.log("horizontal");
+            }
+    
        this.ctx.fillStyle = this.sliderColor;
        this.ctx.fill();
        this.ctx.lineWidth = this.lineWidth;
@@ -53,9 +70,7 @@ Slider.prototype.draw = function () {
        this.ctx.stroke();
        this.ctx.restore();
         //draw the number
-//        this.ctx.font = this.font;
-//        this.strokeStyle = '#000000';
-//        this.ctx.fillText(Math.round(this.value), this.canvas.width*.45, this.canvas.height*.9);
+       
 };
 
 Slider.prototype.drawSlider  = function () {
@@ -76,22 +91,62 @@ Slider.prototype.mouseUp  = function () {
 Slider.prototype.mouseMove  = function (e) {
     
     var rect = this.canvas.getBoundingClientRect();
-    //var X = e.clientX - rect.left;
+    var X = e.clientX - rect.left;
 	var Y = e.clientY - rect.top;
-    var bottom = this.height-(this.height/10)+this.lineWidth;
-    var top = this.lineWidth;
-     this.mousePos = Y;
     
-    this.value = Y; 
-    if(Y < top)
-        {
-            this.mousePos = top;
-        }
-    else if(Y > bottom)
-        {
-            this.mousePos = bottom;
-        }
+     //if vertical slider
+   if(this.axis === 'v')  
+       {
+            this.mousePos = Y;
+            var bottom = this.height-(this.height/10)+this.lineWidth;
+            var top = this.lineWidth;
+      
+            if(Y < top)
+            {
+                this.mousePos = top;
+            }
+            else if(Y > bottom)
+            {
+                this.mousePos = bottom;
+            }
     
-    //console.log("pos: " + Y);
+            if(this.mouseIsDown)
+            {
+                this.value = (this.rangeHigh - Y);
+                if(this.value >= this.rangeHigh)
+                    this.value = this.rangeHigh;
+                if(this.value <= this. rangeLow)
+                    this.value = this.rangeLow;
+            }
+       }//if vertical
+    
+     //if horizontal slider
+   if(this.axis === 'h')  
+       {
+            this.mousePos = X;
+            var left = this.lineWidth*2;
+            var right = this.width-(this.width/10)+this.lineWidth*2;
+      
+            if(X > right)
+            {
+                this.mousePos = right;
+            }
+            else if(X < left)
+            {
+                this.mousePos = left;
+            }
+    
+            if(this.mouseIsDown)
+            {
+                this.value = X;
+                if(this.value >= this.rangeHigh)
+                    this.value = this.rangeHigh;
+                if(this.value <= this. rangeLow)
+                    this.value = this.rangeLow;
+                //console.log(this.value);
+            }
+       }//if vertical
+    
+    
 };
 
