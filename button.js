@@ -1,9 +1,10 @@
 
-function Button (canvas, ctx, scale, buttonColor, lineColor, pressColor, font, lineWidth) {
+function Button (canvas, ctx, scale, rName, buttonColor, lineColor, pressColor, font, lineWidth) {
     
     this.canvas = canvas;
     this.ctx = ctx;
     this.scale = scale;
+    this.rName = rName; //receive name in your pd patch
     this.lineColor = lineColor;
     this.buttonColor = buttonColor;
     this.pressColor = pressColor;
@@ -12,7 +13,7 @@ function Button (canvas, ctx, scale, buttonColor, lineColor, pressColor, font, l
     this.mouseIsDown = false;
     this.obj = {};
     this.radius = (this.canvas.width*.5) - this.lineWidth;
-    this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
+    this.canvas.addEventListener("mousedown", this.mouseDown.bind(this, this.rName));
     this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));
     
 }
@@ -54,10 +55,11 @@ Button.prototype.drawButton = function() {
 	this.obj = window.requestAnimationFrame(this.drawButton.bind(this));
 };
 
-Button.prototype.mouseDown = function() {
-    //console.log("mousedown");
+Button.prototype.mouseDown = function(rName) {
+    //console.log("mousedown = " + rName);
     this.mouseIsDown = true;  
 	this.obj = window.requestAnimationFrame(this.drawButton.bind(this));
+    //window.plugins.pd.sendBang(rName);
 };
 
 Button.prototype.mouseUp = function() {

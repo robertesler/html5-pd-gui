@@ -1,9 +1,10 @@
 //Constructor
-function Slider (canvas, ctx, backgroundColor, sliderColor, rangeLow, rangeHigh, font, lineWidth, lineColor, width, height, axis){
+function Slider (canvas, ctx, rName, backgroundColor, sliderColor, rangeLow, rangeHigh, font, lineWidth, lineColor, width, height, axis){
     
   this.obj = {};  
   this.canvas = canvas;
   this.ctx = ctx;
+  this.rName = rName;
   this.backgroundColor = backgroundColor;
   this.sliderColor = sliderColor;
   this.rangeLow = rangeLow;
@@ -21,7 +22,7 @@ function Slider (canvas, ctx, backgroundColor, sliderColor, rangeLow, rangeHigh,
   this.value = 0;
     
   this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
-  this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));   this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
+  this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));     this.canvas.addEventListener("mousemove", this.mouseMove.bind(this, this.rName));
 }
 
 //Methods
@@ -88,7 +89,7 @@ Slider.prototype.mouseUp  = function () {
     this.mouseIsDown = false;
 };
 
-Slider.prototype.mouseMove  = function (e) {
+Slider.prototype.mouseMove  = function (e, rName) {
     
     var rect = this.canvas.getBoundingClientRect();
     var X = e.clientX - rect.left;
@@ -147,6 +148,6 @@ Slider.prototype.mouseMove  = function (e) {
             }
        }//if vertical
     
-    
+    //window.plugins.pd.sendFloat(rName, this.value);
 };
 

@@ -1,5 +1,5 @@
 //My Constructor
-function Dial (canvas, ctx, scale, circleColor, dialColor, font, lineWidth) {
+function Dial (canvas, ctx, scale, rName, circleColor, dialColor, font, lineWidth) {
     
   this.canvas = canvas;
   this.ctx = ctx;
@@ -9,6 +9,7 @@ function Dial (canvas, ctx, scale, circleColor, dialColor, font, lineWidth) {
     
   this.radius = this.canvas.width*.8;
   this.scale = scale;
+  this.rName = rName;//receive name in pd patch
   this.circleColor = circleColor; //'#325FA2';
   this.dialColor = dialColor; //'#D40000';
   this.font = font; //"24px Arial";
@@ -17,7 +18,7 @@ function Dial (canvas, ctx, scale, circleColor, dialColor, font, lineWidth) {
     
   this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
   this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));
-  this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
+  this.canvas.addEventListener("mousemove", this.mouseMove.bind(this, this.rName));
   
 }
 
@@ -76,7 +77,7 @@ Dial.prototype.mouseUp = function() {
 	this.mouseIsDown = false;
 };
 
-Dial.prototype.mouseMove = function(e) {
+Dial.prototype.mouseMove = function(e, rName) {
 	
 	var rect = this.canvas.getBoundingClientRect();
     var X = e.clientX - rect.left;
@@ -121,5 +122,6 @@ Dial.prototype.mouseMove = function(e) {
 			this.value = range;
 		}
     //console.log(this.value);
+    //window.plugin.pd.sendFloat(rName, this.value);
 };
 
