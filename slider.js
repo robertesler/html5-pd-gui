@@ -22,7 +22,7 @@ function Slider (canvas, ctx, rName, backgroundColor, sliderColor, rangeLow, ran
   this.value = 0;
     
   this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
-  this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));     this.canvas.addEventListener("mousemove", this.mouseMove.bind(this, this.rName));
+  this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));     this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
 }
 
 //Methods
@@ -148,6 +148,6 @@ Slider.prototype.mouseMove  = function (e, rName) {
             }
        }//if vertical
     
-    //window.plugins.pd.sendFloat(rName, this.value);
+    //window.plugins.pd.sendFloat(this.rName, this.value);
 };
 

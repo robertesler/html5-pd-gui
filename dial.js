@@ -18,7 +18,7 @@ function Dial (canvas, ctx, scale, rName, circleColor, dialColor, font, lineWidt
     
   this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
   this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));
-  this.canvas.addEventListener("mousemove", this.mouseMove.bind(this, this.rName));
+  this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
   
 }
 
@@ -122,6 +122,6 @@ Dial.prototype.mouseMove = function(e, rName) {
 			this.value = range;
 		}
     //console.log(this.value);
-    //window.plugin.pd.sendFloat(rName, this.value);
+    //window.plugin.pd.sendFloat(this.rName, this.value);
 };
 

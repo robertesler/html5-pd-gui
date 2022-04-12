@@ -14,7 +14,7 @@ function Toggle (canvas, ctx, scale, rName, toggleColor, lineColor, font, lineWi
     this.counter = 0;
     this.value = 1;
     
-    this.canvas.addEventListener("mousedown", this.mouseDown.bind(this, this.rName));
+    this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
     this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));
 }
 
@@ -49,12 +49,12 @@ Toggle.prototype.drawToggle = function (){
     this.obj = window.requestAnimationFrame(this.drawToggle.bind(this));
 };
 
-Toggle.prototype.mouseDown = function (rName){
+Toggle.prototype.mouseDown = function () {
      this.mouseIsDown = true;
      this.value++;
      this.value %= 2; 
      this.obj = window.requestAnimationFrame(this.drawToggle.bind(this));
-     //window.plugins.pd.sendFloat(rName, this.value);
+     //window.plugins.pd.sendFloat(this.rName, this.value);
 };
 
 Toggle.prototype.mouseUp = function (){

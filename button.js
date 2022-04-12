@@ -13,7 +13,7 @@ function Button (canvas, ctx, scale, rName, buttonColor, lineColor, pressColor, 
     this.mouseIsDown = false;
     this.obj = {};
     this.radius = (this.canvas.width*.5) - this.lineWidth;
-    this.canvas.addEventListener("mousedown", this.mouseDown.bind(this, this.rName));
+    this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
     this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));
     
 }
@@ -55,11 +55,11 @@ Button.prototype.drawButton = function() {
 	this.obj = window.requestAnimationFrame(this.drawButton.bind(this));
 };
 
-Button.prototype.mouseDown = function(rName) {
-    //console.log("mousedown = " + rName);
+Button.prototype.mouseDown = function() {
+    //console.log("mousedown = " + this.rName);
     this.mouseIsDown = true;  
 	this.obj = window.requestAnimationFrame(this.drawButton.bind(this));
-    //window.plugins.pd.sendBang(rName);
+    //window.plugins.pd.sendBang(this.rName);
 };
 
 Button.prototype.mouseUp = function() {
