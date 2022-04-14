@@ -6,6 +6,7 @@ function Dial (canvas, ctx, scale, rName, circleColor, dialColor, font, lineWidt
   this.obj= {}; 
   this.tick = 137;
   this.mouseIsDown = false;
+  this.touchIsStarted = false;
     
   this.radius = this.canvas.width*.8;
   this.scale = scale;
@@ -17,9 +18,11 @@ function Dial (canvas, ctx, scale, rName, circleColor, dialColor, font, lineWidt
   this.value = 0; //0;   
     
   this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
+  this.canvas.addEventListener("touchstart", this.touchStart.bind(this));
+  this.canvas.addEventListener("touchend", this.mouseUp.bind(this));
   this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));
   this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
-  
+  this.canvas.addEventListener("touchmove", this.mouseMove.bind(this));
 }
 
 //my functions
@@ -69,19 +72,38 @@ Dial.prototype.drawDial = function () {
 };
 
 Dial.prototype.mouseDown = function () {
-    this.obj = window.requestAnimationFrame(this.drawDial.bind(this));
+    	this.obj = window.requestAnimationFrame(this.drawDial.bind(this));
 	this.mouseIsDown = true;
 };
 
+Dial.prototype.touchStart = function () {
+	this.obj = window.requestAnimationFrame(this.drawDial.bind(this));
+	this.touchIsStarted = true;
+	
+};
+
 Dial.prototype.mouseUp = function() {
+	this.touchIsStarted = false;
 	this.mouseIsDown = false;
 };
 
-Dial.prototype.mouseMove = function(e, rName) {
+Dial.prototype.mouseMove = function(e) {
 	
 	var rect = this.canvas.getBoundingClientRect();
-    var X = e.clientX - rect.left;
-	var Y = e.clientY - rect.top;
+    	var X;
+	var Y;
+
+	if(this.mouseIsDown)
+	{
+	  X = e.clientX - rect.left;
+	  Y = e.clientY - rect.top;
+	}
+	
+	if(this.touchIsStarted)
+	{
+	  X = e.touches[0].clientX - rect.left;
+	  Y = e.touches[0].clientY - rect.top;
+	}
 	
     //console.log("x: " + X + " | y: " + Y);
     
@@ -115,6 +137,14 @@ Dial.prototype.mouseMove = function(e, rName) {
 		}
 	
 	if(this.mouseIsDown && adjustment < 263)
+		{
+			this.tick = angle;
+			var range = adjustment/263;
+			range *= 100;
+			this.value = range;
+		}
+
+	if(this.touchIsStarted && adjustment < 263)
 		{
 			this.tick = angle;
 			var range = adjustment/263;

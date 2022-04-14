@@ -13,6 +13,7 @@ function Slider (canvas, ctx, rName, backgroundColor, sliderColor, rangeLow, ran
   this.lineWidth = lineWidth;
   this.lineColor = lineColor;
   this.mouseIsDown = false;
+  this.touchIsStarted = false;
   this.width = width-lineWidth;
   this.height = height-lineWidth;
   this.axis = axis;
@@ -22,7 +23,10 @@ function Slider (canvas, ctx, rName, backgroundColor, sliderColor, rangeLow, ran
   this.value = 0;
     
   this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
-  this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));     this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
+  this.canvas.addEventListener("touchstart", this.touchStart.bind(this));
+  this.canvas.addEventListener("touchend", this.mouseUp.bind(this));
+  this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));         this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
+  this.canvas.addEventListener("touchmove", this.mouseMove.bind(this));
 }
 
 //Methods
@@ -48,6 +52,10 @@ Slider.prototype.draw = function () {
                 {
                     this.sliderY = this.mousePos;
                 }
+		if(this.touchIsStarted)
+                {
+                    this.sliderY = this.mousePos;
+                }
                 this.ctx.moveTo(0, this.sliderY);
                 this.ctx.rect(this.lineWidth, this.sliderY, this.width, this.height/10);
             }
@@ -57,7 +65,11 @@ Slider.prototype.draw = function () {
                 if(this.mouseIsDown)
                 {
                     this.sliderX = this.mousePos;
-                }   
+                }
+		if(this.touchIsStarted)
+                {
+                    this.sliderX = this.mousePos;
+                }     
                 this.ctx.moveTo(this.sliderX, 0);
                 this.ctx.rect(this.sliderX-this.lineWidth, this.lineWidth, this.width/10, this.height);
                 //console.log("horizontal");
@@ -80,20 +92,38 @@ Slider.prototype.drawSlider  = function () {
 };
 
 Slider.prototype.mouseDown  = function () {
-    this.mouseIsDown = true;
     this.obj = window.requestAnimationFrame(this.drawSlider.bind(this));
+    this.mouseIsDown = true;
+    
+};
+
+Slider.prototype.touchStart = function () {
+	this.obj = window.requestAnimationFrame(this.drawSlider.bind(this));
+	this.touchIsStarted = true;	
 };
 
 Slider.prototype.mouseUp  = function () {
-    
+    this.touchIsStarted = false;
     this.mouseIsDown = false;
 };
 
-Slider.prototype.mouseMove  = function (e, rName) {
+Slider.prototype.mouseMove  = function (e) {
     
-    var rect = this.canvas.getBoundingClientRect();
-    var X = e.clientX - rect.left;
-	var Y = e.clientY - rect.top;
+    	var rect = this.canvas.getBoundingClientRect();
+   	var X;
+	var Y;
+
+	if(this.mouseIsDown)
+	{
+	  X = e.clientX - rect.left;
+	  Y = e.clientY - rect.top;
+	}
+	
+	if(this.touchIsStarted)
+	{
+	  X = e.touches[0].clientX - rect.left;
+	  Y = e.touches[0].clientY - rect.top;
+	}
     
      //if vertical slider
    if(this.axis === 'v')  
@@ -112,6 +142,15 @@ Slider.prototype.mouseMove  = function (e, rName) {
             }
     
             if(this.mouseIsDown)
+            {
+                this.value = (this.rangeHigh - Y);
+                if(this.value >= this.rangeHigh)
+                    this.value = this.rangeHigh;
+                if(this.value <= this. rangeLow)
+                    this.value = this.rangeLow;
+            }
+
+	    if(this.touchIsStarted)
             {
                 this.value = (this.rangeHigh - Y);
                 if(this.value >= this.rangeHigh)
@@ -146,6 +185,16 @@ Slider.prototype.mouseMove  = function (e, rName) {
                     this.value = this.rangeLow;
                 //console.log(this.value);
             }
+
+	    if(this.touchIsStarted)
+            {
+                this.value = X;
+                if(this.value >= this.rangeHigh)
+                    this.value = this.rangeHigh;
+                if(this.value <= this. rangeLow)
+                    this.value = this.rangeLow;
+                //console.log(this.value);
+            }			
        }//if vertical
     
     //window.plugins.pd.sendFloat(this.rName, this.value);
