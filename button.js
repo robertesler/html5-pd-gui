@@ -11,9 +11,12 @@ function Button (canvas, ctx, scale, rName, buttonColor, lineColor, pressColor, 
     this.font = font;
     this.lineWidth = lineWidth;
     this.mouseIsDown = false;
+    this.touchIsStarted = false;
     this.obj = {};
     this.radius = (this.canvas.width*.5) - this.lineWidth;
     this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
+    this.canvas.addEventListener("touchstart", this.mouseDown.bind(this));
+    this.canvas.addEventListener("touchend", this.mouseUp.bind(this));
     this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));
     
 }
@@ -38,6 +41,11 @@ Button.prototype.draw = function () {
               this.ctx.fillStyle = this.pressColor;
               this.ctx.fill();
           }
+	else if (this.touchIsStarted)
+	{
+	      this.ctx.fillStyle = this.pressColor;
+              this.ctx.fill();
+	}
         else
         {
              this.ctx.fillStyle = this.buttonColor;
@@ -65,4 +73,5 @@ Button.prototype.mouseDown = function() {
 Button.prototype.mouseUp = function() {
     //console.log("mouseup");
     this.mouseIsDown = false;
+    this.touchIsStarted = false;
 };
