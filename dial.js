@@ -1,5 +1,5 @@
 //My Constructor
-function Dial (canvas, ctx, scale, rName, circleColor, dialColor, font, lineWidth) {
+function Dial (canvas, ctx, scale, min, max, rName, circleColor, dialColor, font, lineWidth) {
     
   this.canvas = canvas;
   this.ctx = ctx;
@@ -10,12 +10,14 @@ function Dial (canvas, ctx, scale, rName, circleColor, dialColor, font, lineWidt
     
   this.radius = this.canvas.width*.8;
   this.scale = scale;
+  this.min = min;
+  this.max = max;
   this.rName = rName;//receive name in pd patch
   this.circleColor = circleColor; //'#325FA2';
   this.dialColor = dialColor; //'#D40000';
   this.font = font; //"24px Arial";
   this.circleLineWidth = lineWidth; //10;
-  this.value = 0; //0;   
+  this.value = min; //0;
     
   this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
   this.canvas.addEventListener("touchstart", this.touchStart.bind(this));
@@ -65,14 +67,18 @@ Dial.prototype.draw = function() {
    
 };
 
+Dial.prototype.setValue = function (value, min, max) {
+    var x = (value/100 * (max - min)) + min;
+    return x;
+};
+
 Dial.prototype.drawDial = function () {
-   // console.log("drawDial" + this);
     this.draw();    
 	this.obj = window.requestAnimationFrame(this.drawDial.bind(this));
 };
 
 Dial.prototype.mouseDown = function () {
-    	this.obj = window.requestAnimationFrame(this.drawDial.bind(this));
+    this.obj = window.requestAnimationFrame(this.drawDial.bind(this));
 	this.mouseIsDown = true;
 };
 
@@ -90,7 +96,7 @@ Dial.prototype.mouseUp = function() {
 Dial.prototype.mouseMove = function(e) {
 	
 	var rect = this.canvas.getBoundingClientRect();
-    	var X;
+    var X;
 	var Y;
 
 	if(this.mouseIsDown)
@@ -141,7 +147,7 @@ Dial.prototype.mouseMove = function(e) {
 			this.tick = angle;
 			var range = adjustment/263;
 			range *= 100;
-			this.value = range;
+            this.value = this.setValue(range, this.min, this.max);
 		}
 
 	if(this.touchIsStarted && adjustment < 263)
@@ -149,9 +155,10 @@ Dial.prototype.mouseMove = function(e) {
 			this.tick = angle;
 			var range = adjustment/263;
 			range *= 100;
-			this.value = range;
+			this.value = this.setValue(range, this.min, this.max);
 		}
-    //console.log(this.value);
-    //window.plugin.pd.sendFloat(this.rName, this.value);
+    
+    //console.log();
+    //window.plugins.pd.sendFloat(this.rName, this.value);
 };
 

@@ -2,7 +2,7 @@
 Dials
 */
 
-//Dial(canvas, ctx, scale, rName, circleColor, dialColor, font, lineWidth)
+//Dial(canvas, ctx, scale, min, max, rName, circleColor, dialColor, font, lineWidth)
 var dial = new Array();
 
 var dial1 = document.getElementById('dial1');
@@ -11,8 +11,8 @@ var dial1Ctx = dial1.getContext('2d');
 var dial2 = document.getElementById('dial2');
 var dial2Ctx = dial2.getContext('2d');
 
-dial.push( new Dial(dial1, dial1Ctx, .5, 'test1', '#c94c4c', '#eea29a', "24px Arial", 10) );
-dial.push( new Dial(dial2, dial2Ctx, .25, 'test2', '#000000', '#808080', "12px Arial", 8) );
+dial.push( new Dial(dial1, dial1Ctx, .5, 20, 80, 'test1', '#c94c4c', '#eea29a', "24px Arial", 10) );
+dial.push( new Dial(dial2, dial2Ctx, .25, 0, 500, 'test2', '#000000', '#808080', "12px Arial", 8) );
 
 dial[0].drawDial();
 dial[1].drawDial();
@@ -56,7 +56,7 @@ slider.push( new Slider(slider1, slider1Ctx, 'slider1', '#FFFFFF', '#000000',  0
 
 slider.push( new Slider(slider2, slider2Ctx, 'slider2', '#6b5b95', '#feb236',  0, 100, "12px Arial", 4, '#000000', 40, 100, 'v'));
 //axis = 'h' is horizonatl, 'v' is vertical
-slider.push( new Slider(slider3, slider3Ctx, 'slider3', '#6b5b95', '#feb236',  0, 100, "12px Arial", 2, '#000000', 100, 40, 'h'));
+slider.push( new Slider(slider3, slider3Ctx, 'slider3', '#6b5b95', '#feb236',  20, 100, "12px Arial", 2, '#000000', 100, 40, 'h'));
 
 //onsole.log(slider[0]);
 slider[0].drawSlider();

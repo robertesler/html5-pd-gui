@@ -20,12 +20,15 @@ function Slider (canvas, ctx, rName, backgroundColor, sliderColor, rangeLow, ran
   this.sliderY = this.height-(this.height/10)+this.lineWidth;
   this.sliderX = this.lineWidth*2;
   this.mousePos = 0;
+  this.X = 0;
+  this.Y = this.height;
   this.value = 0;
     
   this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
   this.canvas.addEventListener("touchstart", this.touchStart.bind(this));
   this.canvas.addEventListener("touchend", this.mouseUp.bind(this));
-  this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));         this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
+  this.canvas.addEventListener("mouseup", this.mouseUp.bind(this));
+  this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
   this.canvas.addEventListener("touchmove", this.mouseMove.bind(this));
 }
 
@@ -41,6 +44,7 @@ Slider.prototype.draw = function () {
        this.ctx.strokeStyle = this.lineColor;
        this.ctx.stroke();
        
+    
        //draw the slider
        this.ctx.save();
        this.ctx.beginPath();
@@ -52,49 +56,60 @@ Slider.prototype.draw = function () {
                 {
                     this.sliderY = this.mousePos;
                 }
-		if(this.touchIsStarted)
+                //touch events
+                if(this.touchIsStarted)
                 {
                     this.sliderY = this.mousePos;
                 }
                 this.ctx.moveTo(0, this.sliderY);
                 this.ctx.rect(this.lineWidth, this.sliderY, this.width, this.height/10);
+               
             }
         if(this.axis === 'h')
             {
-                    //mouse events
+                //mouse events
                 if(this.mouseIsDown)
                 {
                     this.sliderX = this.mousePos;
                 }
-		if(this.touchIsStarted)
+                //touch events
+                if(this.touchIsStarted)
                 {
                     this.sliderX = this.mousePos;
                 }     
                 this.ctx.moveTo(this.sliderX, 0);
                 this.ctx.rect(this.sliderX-this.lineWidth, this.lineWidth, this.width/10, this.height);
+                
                 //console.log("horizontal");
             }
-    
+       
        this.ctx.fillStyle = this.sliderColor;
        this.ctx.fill();
        this.ctx.lineWidth = this.lineWidth;
        this.ctx.strokeStyle = this.lineColor;
-       this.ctx.closePath();
+     //  this.ctx.closePath();
        this.ctx.stroke();
        this.ctx.restore();
-        //draw the number
+      
        
 };
 
 Slider.prototype.drawSlider  = function () {
-   this.draw();
-   this.obj = window.requestAnimationFrame(this.drawSlider.bind(this)); 
+    this.draw();
+    this.obj = window.requestAnimationFrame(this.drawSlider.bind(this));
 };
 
 Slider.prototype.mouseDown  = function () {
     this.obj = window.requestAnimationFrame(this.drawSlider.bind(this));
     this.mouseIsDown = true;
-    
+    if(this.axis === 'v')
+        {
+            this.mousePos = this.Y;
+        }
+    if(this.axis === 'h')
+        {
+            this.mousePos = this.X;
+        }
 };
 
 Slider.prototype.touchStart = function () {
@@ -109,7 +124,7 @@ Slider.prototype.mouseUp  = function () {
 
 Slider.prototype.mouseMove  = function (e) {
     
-    	var rect = this.canvas.getBoundingClientRect();
+    var rect = this.canvas.getBoundingClientRect();
    	var X;
 	var Y;
 
@@ -117,33 +132,37 @@ Slider.prototype.mouseMove  = function (e) {
 	{
 	  X = e.clientX - rect.left;
 	  Y = e.clientY - rect.top;
+      this.X = X;
+      this.Y = Y;
 	}
 	
 	if(this.touchIsStarted)
 	{
 	  X = e.touches[0].clientX - rect.left;
 	  Y = e.touches[0].clientY - rect.top;
+      this.X = X;
+      this.Y = Y;
 	}
     
      //if vertical slider
    if(this.axis === 'v')  
        {
-            this.mousePos = Y;
+            this.mousePos = this.Y;
             var bottom = this.height-(this.height/10)+this.lineWidth;
             var top = this.lineWidth;
-      
-            if(Y < top)
+        
+            if(this.Y < top)
             {
                 this.mousePos = top;
             }
-            else if(Y > bottom)
+            else if(this.Y > bottom)
             {
                 this.mousePos = bottom;
             }
-    
+
             if(this.mouseIsDown)
             {
-                this.value = (this.rangeHigh - Y);
+                this.value = (this.rangeHigh - this.Y);
                 if(this.value >= this.rangeHigh)
                     this.value = this.rangeHigh;
                 if(this.value <= this. rangeLow)
@@ -152,7 +171,7 @@ Slider.prototype.mouseMove  = function (e) {
 
 	    if(this.touchIsStarted)
             {
-                this.value = (this.rangeHigh - Y);
+                this.value = (this.rangeHigh - this.Y);
                 if(this.value >= this.rangeHigh)
                     this.value = this.rangeHigh;
                 if(this.value <= this. rangeLow)
@@ -163,22 +182,22 @@ Slider.prototype.mouseMove  = function (e) {
      //if horizontal slider
    if(this.axis === 'h')  
        {
-            this.mousePos = X;
+            this.mousePos = this.X;
             var left = this.lineWidth*2;
             var right = this.width-(this.width/10)+this.lineWidth*2;
       
-            if(X > right)
+            if(this.X > right)
             {
                 this.mousePos = right;
             }
-            else if(X < left)
+            else if(this.X < left)
             {
                 this.mousePos = left;
             }
     
             if(this.mouseIsDown)
             {
-                this.value = X;
+                this.value = this.X;
                 if(this.value >= this.rangeHigh)
                     this.value = this.rangeHigh;
                 if(this.value <= this. rangeLow)
@@ -188,7 +207,7 @@ Slider.prototype.mouseMove  = function (e) {
 
 	    if(this.touchIsStarted)
             {
-                this.value = X;
+                this.value = this.X;
                 if(this.value >= this.rangeHigh)
                     this.value = this.rangeHigh;
                 if(this.value <= this. rangeLow)
